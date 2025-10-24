@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday!</title>
+<style>
+    body {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #ffe6f0, #e6f7ff);
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .card {
+      display: flex;
+      width: 70%;
+      max-width: 700px;
+      background: white;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      border-radius: 20px;
+      overflow: hidden;
+    }
+
+    .left {
+      width: 50%;
+      padding: 40px;
+      background: #ffccdc;
+    }
+
+    .left h1 {
+      font-size: 2.2em;
+      color: #ff4081;
+    }
+
+    .left h6 {
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 130px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .left p {
+      margin-top: 100px;
+      font-size: 1.2em;
+      color: #333;
+    }
+
+    .right {
+      width: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #fff5e6;
+    }
+
+    .cake {
+      position: relative;
+      width: 150px;
+      height: 100px;
+      background: #ff9a76;
+      border-radius: 10px;
+    }
+
+    .layer {
+        position: relative;
+        width: 250px;
+        height: 100px;
+        background: #ff6f61;
+        top: 70px;
+        right: 45px;
+        border-radius: 10px;
+    }
+
+    .candle {
+      position: absolute;
+      width: 15px;
+      height: 50px;
+      background: #fff;
+      top: -50px;
+      left: 70px;
+      border-radius: 5px;
+    }
+
+    .flame {
+      position: absolute;
+      top: -14px;
+      left: 4px;
+      width: 8px;
+      height: 15px;
+      background: radial-gradient(ellipse at center, yellow 0%, orange 80%, transparent 100%);
+      border-radius: 50%;
+      animation: flicker 0.2s infinite alternate;
+    }
+
+    @keyframes flicker {
+        from { transform: scale(1) translateY(0); opacity: 1; }
+        to { transform: scale(1.2) translateY(-2px); opacity: 0.8; }
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+</head>
+<body>
+  <div class="card">
+    <div class="left">
+      <h1>🎉 Happy Birthday Meow!</h1>
+      <p> May the coming years be filled with peace, less stress and endless meows. </p> 
+      <h6>*Blow on the screen*</h6>
+    </div>
+    <div class="right">
+      <div class="cake">
+        <div class="layer"></div>
+        <div class="candle">
+          <div class="flame" id="flame"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <script>
+        async function detectBlow() {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const mic = audioContext.createMediaStreamSource(stream);
+            const analyser = audioContext.createAnalyser();
+            mic.connect(analyser);
+            analyser.fftSize = 512;
+            const data = new Uint8Array(analyser.frequencyBinCount);
+            
+            function checkSound() {
+                analyser.getByteFrequencyData(data);
+                const volume = data.reduce((a, b) => a + b, 0) / data.length;
+                if (volume > 80) { 
+                  document.getElementById('flame').classList.add('hidden');
+                }
+                requestAnimationFrame(checkSound);
+            }
+          
+            checkSound();
+        }
+
+        detectBlow();
+    </script>
+</body>
+</html>
